@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Alert</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body {
+            background: #000;
+            color: #0f0;
+            font-family: monospace;
+            overflow: hidden;
+            height: 100vh;
+            cursor: none;
+        }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #f00;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #f00;
+        }
+        .warning {
+            color: #ff0;
+            font-size: 1.2em;
+            max-width: 800px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+        .pin-box {
+            margin: 30px 0;
+        }
+        input {
+            background: #111;
+            color: #0f0;
+            border: 2px solid #0f0;
+            padding: 15px;
+            font-size: 1.5em;
+            text-align: center;
+            letter-spacing: 5px;
+            border-radius: 5px;
+            width: 200px;
+        }
+        button {
+            background: #222;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 10px 25px;
+            font-size: 1.2em;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0f0;
+            color: #000;
+        }
+        .contact {
+            color: #f00;
+            font-size: 1.3em;
+            margin-top: 40px;
+            border: 1px solid #f00;
+            padding: 15px;
+            background: #111;
+        }
+        .countdown {
+            color: #ff0;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        .fake-error {
+            color: #ccc;
+            font-size: 0.9em;
+            margin-top: 30px;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+            max-width: 800px;
+        }
+    </style>
+</head>
+<body>
+    <div id="overlay">
+        <h1>⚠️ SYSTEM LOCKED ⚠️</h1>
+        
+        <div class="warning">
+            Your system has been encrypted by H3R4-Ransomware.<br>
+            All your files, photos, and documents have been encrypted with military-grade AES-256.<br>
+            DO NOT attempt to restart or close this window — your data will be permanently destroyed.
+        </div>
+
+        <div class="pin-box">
+            <div style="color:#0f0; margin-bottom:10px;">ENTER UNLOCK PIN:</div>
+            <input type="password" id="pinInput" maxlength="6" placeholder="000000">
+            <br>
+            <button onclick="checkPin()">UNLOCK SYSTEM</button>
+        </div>
+
+        <div class="countdown" id="countdown">
+            TIME REMAINING: <span id="timer">59:59</span>
+        </div>
+
+        <div class="contact">
+            🔐 TO GET YOUR UNLOCK PIN, CONTACT:<br>
+            <strong>@blablablaugsb</strong> on TELEGRAM<br>
+            PAYMENT: 15.000 IDR (15K) via OVO/DANA/GoPay<br>
+            ⚠️ DO NOT SHARE THIS PIN WITH OTHERS
+        </div>
+
+        <div class="fake-error">
+            System Log: C:\\Windows\\System32\\drivers\\h3r4_core.sys [CORRUPTED]<br>
+            Threat: H3R4-Ransomware (Variant: JakartaGhost v2.0)<br>
+            Detection: File Encryption in Progress... [98% Complete]<br>
+            Recommendation: Pay ransom before timer expires.
+        </div>
+    </div>
+
+    <!-- Fake terminal noise in background -->
+    <div id="noise" style="position:fixed; top:0; left:0; width:100%; height:100%; opacity:0.03; z-index:-1; font-size:12px; color:#0f0; white-space:pre; pointer-events:none;"></div>
+
+    <script>
+        // Block keyboard/mouse attempts to escape
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 'w' || e.key === 't' || e.key === 'n')) {
+                e.preventDefault();
+                alert('Action blocked by security policy.');
+            }
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+                alert('Developer tools disabled by ransomware.');
+            }
+        });
+
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // Fullscreen lock
+        function requestFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) elem.requestFullscreen();
+            else if (elem.mozRequestFullScreen) elem.mozRequestFullScreen();
+            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+            else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+        }
+        requestFullscreen();
+
+        // Fake terminal noise generator
+        const noiseEl = document.getElementById('noise');
+        let noiseText = '';
+        for (let i = 0; i < 5000; i++) {
+            noiseText += Math.random() > 0.5 ? '0' : '1';
+            if (i % 100 === 0) noiseText += '\n';
+        }
+        noiseEl.textContent = noiseText;
+
+        // Timer countdown
+        let timeLeft = 59 * 60 + 59; // 59:59 in seconds
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 0) {
+                document.getElementById('countdown').innerHTML = 
+                    '<span style="color:#f00;">TIME EXPIRED — FILES PERMANENTLY ENCRYPTED</span>';
+            } else {
+                timeLeft--;
+                setTimeout(updateTimer, 1000);
+            }
+        }
+        updateTimer();
+
+        // PIN Check
+        const correctPin = '202015';
+        function checkPin() {
+            const input = document.getElementById('pinInput').value;
+            if (input === correctPin) {
+                alert('PIN ACCEPTED. Decrypting files...');
+                document.body.innerHTML = '<div style="padding:50px;color:#0f0;background:#000;height:100vh;display:flex;align-items:center;justify-content:center;font-size:2em;">System Unlocked. Files restored.</div>';
+                // In real ransomware, here would be decryption routine
+            } else {
+                alert('WRONG PIN. Attempt logged. Contact Telegram IMMEDIATELY.');
+                document.getElementById('pinInput').value = '';
+                document.getElementById('pinInput').style.borderColor = '#f00';
+            }
+        }
+
+        // Prevent closing
+        window.onbeforeunload = function() {
+            return 'Warning: Closing window will corrupt all encrypted files.';
+        };
+    </script>
+</body>
+</html>
